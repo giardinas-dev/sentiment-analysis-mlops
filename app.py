@@ -1,13 +1,18 @@
 import gradio as gr
 from src.utils import SentimentAnalyzer
 import torch
-from transformers import AutoModelForSequenceClassification, AutoTokenizer
 
+from transformers import AutoModelForSequenceClassification
+from transformers import TFAutoModelForSequenceClassification
+from transformers import AutoTokenizer, AutoConfig
 
 
 MODEL = f"cardiffnlp/twitter-roberta-base-sentiment-latest"
 tokenizer = AutoTokenizer.from_pretrained(MODEL)
 config = AutoConfig.from_pretrained(MODEL)
+# PT
+model = AutoModelForSequenceClassification.from_pretrained(MODEL)
+
 
 # Istanza del sentiment analyzer
 analyzer = SentimentAnalyzer(model, tokenizer, config)
