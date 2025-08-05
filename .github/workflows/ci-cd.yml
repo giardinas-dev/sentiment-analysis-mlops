@@ -29,4 +29,12 @@ jobs:
       run: |
         echo "Aggiungi qui i tuoi test o verifica il training"
 
+    - name: Setup git remote for space
+      run: git remote add space https://<TOKEN>@github.com/giardinsdev/sentiment-analyzer-twitter.git
+      env:
+        TOKEN: ${{ secrets.SPACE_GIT_TOKEN }}
+
+    - name: Push to space (force)
+      run: git push --force space main
+
 
