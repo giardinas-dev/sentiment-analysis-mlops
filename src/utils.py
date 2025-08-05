@@ -25,15 +25,12 @@ class SentimentAnalyzer:
             self.unfreeze_all_layers()
 
     def freeze_base_layers(self):
-        params = list(self.model.named_parameters())
-
-        # Congela tutto tranne classificatore
-        for name, param in params:
-            param.requires_grad = "classifier" in name
-
-        # Scongela i primi 6 parametri (anche se non sono del classificatore)
-        for name, param in params[:6]:
+      for name, param in self.model.named_parameters():
+        if any(f"roberta.encoder.layer.{i}." in name for i in range(8, 12)) or "classifier" in name:
             param.requires_grad = True
+        else:
+            param.requires_grad = False
+
 
 
     def unfreeze_all_layers(self):
@@ -80,7 +77,7 @@ class SentimentAnalyzer:
             self.model.train()
             total_loss = 0
 
-            for i in range(0, num_samples, self.batch_size):
+            for i in tqdm(range(0, num_samples, self.batch_size),"batch count"):
                 batch_texts = X_train[i:i + self.batch_size].tolist()
                 batch_labels = y_train[i:i + self.batch_size].tolist()
 
