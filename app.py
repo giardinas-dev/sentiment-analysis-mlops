@@ -17,7 +17,7 @@ tokenizer = AutoTokenizer.from_pretrained(MODEL)
 config = AutoConfig.from_pretrained(MODEL)
 model = AutoModelForSequenceClassification.from_pretrained(MODEL)
 
-analyzer = SentimentAnalyzer(model, tokenizer, config)
+analyzer = SentimentAnalyzer(model, tokenizer, config,)
 REQUEST_COUNT = Counter('request_count', 'Numero di richieste sentiment')
 
 # Mappa label -> colore

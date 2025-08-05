@@ -14,7 +14,7 @@ import torch
 import pandas as pd
 
 class SentimentAnalyzer:
-    def __init__(self, model, tokenizer, config, criterion, opt, epochs=15, freeze_base=True):
+    def __init__(self, model, tokenizer, config, criterion = None , opt = None, epochs=15, freeze_base=True):
         self.model = model
         self.tokenizer = tokenizer
         self.config = config
@@ -22,8 +22,8 @@ class SentimentAnalyzer:
         self.freeze_base = freeze_base
         self.batch_size = 32
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        self.optimizer = opt
-        self.criterion = criterion
+        self.optimizer = opt | None
+        self.criterion = criterion | None
         self.model.to(self.device)
 
         if freeze_base:
@@ -68,6 +68,8 @@ class SentimentAnalyzer:
     def train(self, X_train, y_train, X_val=None, y_val=None, epochs=15):
         if self.optimizer is None:
             raise ValueError("Optimizer non fornito.")
+        if self.criterion is None:
+            raise ValueError("Loss Function non fornita.")
 
         optimizer = self.optimizer
 
@@ -130,6 +132,10 @@ class SentimentAnalyzer:
         }
 
     def evaluate(self, X_val, y_val):
+        if self.optimizer is None:
+            raise ValueError("Optimizer non fornito.")
+        if self.criterion is None:
+            raise ValueError("Loss Function non fornita.")
         self.model.eval()
         total_loss = 0
         all_preds = []
