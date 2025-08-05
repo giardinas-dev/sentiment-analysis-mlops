@@ -1,4 +1,7 @@
 import gradio as gr
+import importlib
+import src.utils
+importlib.reload(src.utils)
 from src.utils import SentimentAnalyzer
 import torch
 
