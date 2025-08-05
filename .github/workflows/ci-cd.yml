@@ -33,7 +33,8 @@ jobs:
       env:
         HF_TOKEN: ${{ secrets.HF_TOKEN }}
       run: |
-        git remote add space https://huggingface.co/spaces/giardinsdev/sentiment-analyzer-twitter
+        git remote add space https://giardinsdev:${HF_TOKEN}@huggingface.co/spaces/giardinsdev/sentiment-analyzer-twitter
         git push --force space main
+
 
 
