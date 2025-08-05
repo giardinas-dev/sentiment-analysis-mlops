@@ -16,7 +16,6 @@ pinned: false
 ## Overview
 
 This project focuses on sentiment analysis and online reputation monitoring using machine learning models and MLOps methodologies. It leverages fine-tuning of pre-trained models to analyze social media data and automatically classify user sentiments as positive, neutral, or negative. The system includes CI/CD pipelines, deployment strategies, and continuous monitoring tools to help businesses proactively manage and improve their reputation online.
-
 ## Features
 
 - **Fine-tuning of Pre-trained Models:** Adapt state-of-the-art models (e.g., RoBERTa) for domain-specific sentiment analysis.
