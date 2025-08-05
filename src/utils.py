@@ -2,15 +2,21 @@ import torch
 import numpy as np
 from scipy.special import softmax
 from tqdm import tqdm
+from sklearn.metrics import f1_score
+import numpy as np
 
 class SentimentAnalyzer:
-    def __init__(self, model, tokenizer, config, epochs=10, freeze_base=True):
+    def __init__(self, model, tokenizer, config, criterion, opt, epochs=15, freeze_base=True):
         self.model = model
         self.tokenizer = tokenizer
         self.config = config
         self.epochs = epochs
         self.freeze_base = freeze_base
         self.batch_size = 32
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.optimizer = opt
+        self.criterion = criterion
+        self.model.to(self.device)
 
         if freeze_base:
             self.freeze_base_layers()
@@ -18,8 +24,16 @@ class SentimentAnalyzer:
             self.unfreeze_all_layers()
 
     def freeze_base_layers(self):
-        for name, param in self.model.named_parameters():
+        params = list(self.model.named_parameters())
+
+        # Congela tutto tranne classificatore
+        for name, param in params:
             param.requires_grad = "classifier" in name
+
+        # Scongela i primi 6 parametri (anche se non sono del classificatore)
+        for name, param in params[:6]:
+            param.requires_grad = True
+
 
     def unfreeze_all_layers(self):
         for param in self.model.parameters():
@@ -31,9 +45,9 @@ class SentimentAnalyzer:
     def predict(self, text):
         self.model.eval()
         with torch.no_grad():
-            encoded_input = self.preprocess(text)
+            encoded_input = self.preprocess(text).to(self.device)
             output = self.model(**encoded_input)
-            scores = output[0][0].detach().numpy()
+            scores = output[0][0].detach().cpu().numpy()
             probs = softmax(scores)
 
         ranking = np.argsort(probs)[::-1]
@@ -46,69 +60,101 @@ class SentimentAnalyzer:
         for i, (label, score) in enumerate(results.items(), 1):
             print(f"{i}) {label}: {score}")
 
-    def train(self, X_train, y_train, optimizer, loss_fn, device):
-        self.model.to(device)
-        self.model.train()
+    def train(self, X_train, y_train, X_val=None, y_val=None, epochs=15):
+        if self.optimizer is None:
+            raise ValueError("Optimizer non fornito.")
+
+        optimizer = self.optimizer
+
+        train_losses = []
+        val_losses = []
+        val_accuracies = []
+        val_f1 = []
 
         num_samples = len(X_train)
-        for epoch in tqdm(range(self.epochs),'epochs'):
+
+        print("Inizio training...")
+
+        for epoch in tqdm(range(epochs), desc="Training Progress"):
+            self.model.train()
             total_loss = 0
-            for i in tqdm(range(0, num_samples, self.batch_size),'batch count'):
-                batch_texts = X_train[i:i+self.batch_size]
-                batch_labels = y_train[i:i+self.batch_size]
+
+            for i in range(0, num_samples, self.batch_size):
+                batch_texts = X_train[i:i + self.batch_size].tolist()
+                batch_labels = y_train[i:i + self.batch_size].tolist()
+
+                # Preprocessing
+                texts = [str(t) for t in batch_texts]  # fix importante!
+                inputs = self.tokenizer(texts, padding=True, truncation=True, return_tensors="pt").to(self.device)
+                labels = torch.tensor(batch_labels).to(self.device)
 
                 optimizer.zero_grad()
-
-                # Tokenizza batch
-                texts = [str(t) for t in batch_texts]  # fix importante!
-                encodings = self.tokenizer(texts, padding=True, truncation=True, return_tensors="pt").to(device)
-                encodings = self.tokenizer(list(batch_texts), padding=True, truncation=True, return_tensors="pt").to(device)
-                labels = torch.tensor(batch_labels).to(device)
-
-                outputs = self.model(**encodings)
+                outputs = self.model(**inputs)
                 logits = outputs.logits if hasattr(outputs, "logits") else outputs[0]
 
-                loss = loss_fn(logits, labels)
+                loss = self.criterion(logits, labels)
                 loss.backward()
                 optimizer.step()
 
                 total_loss += loss.item()
 
-            avg_loss = total_loss / (num_samples / self.batch_size)
-            print(f"Epoch {epoch+1}/{self.epochs}, Loss: {avg_loss:.4f}")
+            avg_train_loss = total_loss / (num_samples / self.batch_size)
+            train_losses.append(avg_train_loss)
 
-    def evaluate(self, X_test, y_test, loss_fn, device):
-        self.model.to(device)
+            if X_val is not None and y_val is not None:
+                val_loss, val_acc, val_f1_score = self.evaluate(X_val, y_val)
+                val_losses.append(val_loss)
+                val_accuracies.append(val_acc)
+                val_f1.append(val_f1_score)
+
+                tqdm.write(
+                    f"[Epoch {epoch + 1}/{epochs}] Train Loss: {avg_train_loss:.4f} | "
+                    f"Val Loss: {val_loss:.4f} | Acc: {val_acc:.4f} | F1: {val_f1_score:.4f}"
+                )
+            else:
+                tqdm.write(f"[Epoch {epoch + 1}/{epochs}] Train Loss: {avg_train_loss:.4f}")
+        
+        # Salva il modello localmente
+        model.save_pretrained("sentiment-twitter-colab")
+        tokenizer.save_pretrained("sentiment-twitter-colab")
+        return {
+            "train_losses": train_losses,
+            "val_losses": val_losses,
+            "val_accuracies": val_accuracies,
+            "val_f1": val_f1
+        }
+
+    def evaluate(self, X_val, y_val):
         self.model.eval()
-
         total_loss = 0
-        correct = 0
-        total = 0
-        num_samples = len(X_test)
+        all_preds = []
+        all_labels = []
+
+        num_samples = len(X_val)
 
         with torch.no_grad():
-            for i in range(0, num_samples, self.batch_size):
-                batch_texts = X_test[i:i+self.batch_size]
-                batch_labels = y_test[i:i+self.batch_size]
+            for i in tqdm(range(0, num_samples, self.batch_size),"Testing samples"):
+                batch_texts = X_val[i:i + self.batch_size].tolist()
+                batch_labels = y_val[i:i + self.batch_size].tolist()
+                texts = [str(t) for t in batch_texts]
+                inputs = self.tokenizer(texts, padding=True, truncation=True, return_tensors="pt").to(self.device)
+                labels = torch.tensor(batch_labels).to(self.device)
 
-                texts = [str(t) for t in batch_texts]  # fix importante!
-                encodings = self.tokenizer(texts, padding=True, truncation=True, return_tensors="pt").to(device)
-                labels = torch.tensor(batch_labels).to(device)
-
-                outputs = self.model(**encodings)
+                outputs = self.model(**inputs)
                 logits = outputs.logits if hasattr(outputs, "logits") else outputs[0]
 
-                loss = loss_fn(logits, labels)
+                loss = self.criterion(logits, labels)
                 total_loss += loss.item()
 
                 preds = torch.argmax(logits, dim=1)
-                correct += (preds == labels).sum().item()
-                total += labels.size(0)
+                all_preds.extend(preds.cpu().numpy())
+                all_labels.extend(labels.cpu().numpy())
 
         avg_loss = total_loss / (num_samples / self.batch_size)
-        accuracy = correct / total
-        print(f"Evaluation - Loss: {avg_loss:.4f}, Accuracy: {accuracy:.4f}")
-        return avg_loss, accuracy
+        accuracy = np.mean(np.array(all_preds) == np.array(all_labels))
+        f1 = f1_score(all_labels, all_preds, average='weighted')
+
+        return avg_loss, accuracy, f1
 
 
 def get_stratified_subset(df, label_col='sentiment', subset_ratio=0.2, random_state=42):
@@ -119,6 +165,8 @@ def get_stratified_subset(df, label_col='sentiment', subset_ratio=0.2, random_st
         random_state=random_state
     )
     return subset
+
+
 
 
 def preprocess(text):
