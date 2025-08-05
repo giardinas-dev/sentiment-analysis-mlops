@@ -22,8 +22,8 @@ class SentimentAnalyzer:
         self.freeze_base = freeze_base
         self.batch_size = 32
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        self.optimizer = opt | None
-        self.criterion = criterion | None
+        self.optimizer = opt 
+        self.criterion = criterion
         self.model.to(self.device)
 
         if freeze_base:
@@ -190,6 +190,7 @@ def preprocess(text):
 
 
 def prepare_data_and_model(model_name="cardiffnlp/twitter-roberta-base-sentiment-latest", subset_ratio=0.1):
+    print("Prepare model and data...")
     # Load tokenizer, config, model
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     config = AutoConfig.from_pretrained(model_name)
