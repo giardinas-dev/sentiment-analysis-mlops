@@ -3,8 +3,6 @@ from transformers import TFAutoModelForSequenceClassification
 from transformers import AutoTokenizer, AutoConfig
 import numpy as np
 from scipy.special import softmax
-import kagglehub
-from kagglehub import KaggleDatasetAdapter
 import torch
 from torch.utils.data import DataLoader
 from torch.optim import AdamW

@@ -7,3 +7,15 @@ tqdm
 spacy
 emoji
 gradio==3.38.0
+
+
+
+# Prometheus metrics
+prometheus_client
+
+# ASGI app framework (usato per esporre /metrics)
+starlette
+
+# Se usi anche uvicorn per l'avvio in locale
+uvicorn
+
