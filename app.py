@@ -20,13 +20,14 @@ analyzer = SentimentAnalyzer(model, tokenizer, config)
 
 def analyze_sentiment(text):
     results = analyzer.predict(text)
-    return {k: f"{v*100:.2f}%" for k, v in results.items()}
+    lines = [f"{label}: {score*100:.2f}%" for label, score in results.items()]
+    return "\n".join(lines)
 
 # UI Gradio
 iface = gr.Interface(
     fn=analyze_sentiment,
     inputs=gr.Textbox(lines=2, placeholder="Inserisci testo da analizzare..."),
-    outputs=gr.Label(num_top_classes=3),
+    outputs=gr.Textbox(), 
     title="Sentiment Analyzer Twitter",
     description="Analizza il sentiment del testo inserito usando un modello BERT multilingue."
 )
