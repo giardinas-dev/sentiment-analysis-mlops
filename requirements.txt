@@ -6,7 +6,7 @@ pandas
 tqdm
 spacy
 emoji
-gradio==3.38.0
+gradio==4.43.0 
 
 
 
