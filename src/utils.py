@@ -115,8 +115,8 @@ class SentimentAnalyzer:
                 tqdm.write(f"[Epoch {epoch + 1}/{epochs}] Train Loss: {avg_train_loss:.4f}")
         
         # Salva il modello localmente
-        model.save_pretrained("sentiment-twitter-colab")
-        tokenizer.save_pretrained("sentiment-twitter-colab")
+        self.model.save_pretrained("sentiment-twitter-colab")
+        self.tokenizer.save_pretrained("sentiment-twitter-colab")
         return {
             "train_losses": train_losses,
             "val_losses": val_losses,

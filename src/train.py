@@ -21,7 +21,7 @@ from sklearn.model_selection import StratifiedShuffleSplit
 from datasets import load_dataset
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
-from src.utils import SentimentAnalyzer, preprocess, get_stratified_subset
+from utils import SentimentAnalyzer, preprocess, get_stratified_subset
 
 
 MODEL = f"cardiffnlp/twitter-roberta-base-sentiment-latest"
