@@ -4,6 +4,7 @@ from scipy.special import softmax
 from tqdm import tqdm
 from sklearn.metrics import f1_score
 import numpy as np
+from sklearn.model_selection import train_test_split
 
 class SentimentAnalyzer:
     def __init__(self, model, tokenizer, config, criterion, opt, epochs=15, freeze_base=True):
