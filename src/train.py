@@ -89,11 +89,23 @@ print(f"Train size: {len(X_train)}, Test size: {len(X_test)}")
 
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-optimizer = AdamW(filter(lambda p: p.requires_grad, model.parameters()), lr=5e-5)
-loss_fn = CrossEntropyLoss()
+optimizer = AdamW(filter(lambda p: p.requires_grad, model.parameters()), lr=3e-5)
+
+counts = dataset['sentiment'].value_counts()
+negative_count = counts.get('Negative', 0)
+positive_count = counts.get('Positive', 0)
+neutral_count = counts.get('Neutral', 0)
+counts = torch.tensor([negative_count, positive_count, neutral_count], dtype=torch.float)
+weights = 1.0 / counts
+weights = weights / weights.sum()  # normalizza
+criterion = CrossEntropyLoss(weight=weights.to(device))
 
 
-sentiment = SentimentAnalyzer(model, tokenizer, config)
-print(X_train)
-sentiment.train(X_train, y_train_encoded, optimizer, loss_fn, device)
-sentiment.evaluate(X_test, y_test_encoded, loss_fn, device)
+
+
+sentiment = SentimentAnalyzer(model, tokenizer, config, criterion, optimizer, epochs=10, freeze_base=True)
+
+
+
+sentiment.train(X_train, y_train_encoded, X_test, y_test_encoded)
+sentiment.evaluate(X_test, y_test_encoded)
