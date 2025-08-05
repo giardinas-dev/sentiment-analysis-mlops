@@ -6,7 +6,7 @@ from transformers import AutoModelForSequenceClassification
 from transformers import AutoTokenizer, AutoConfig
 
 
-MODEL = "cardiffnlp/twitter-roberta-base-sentiment-latest"
+MODEL = "giardinsdev/sentiment-analyzer-twitter"
 tokenizer = AutoTokenizer.from_pretrained(MODEL)
 config = AutoConfig.from_pretrained(MODEL)
 model = AutoModelForSequenceClassification.from_pretrained(MODEL)

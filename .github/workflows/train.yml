@@ -1,0 +1,33 @@
+name: Train and Push Model to Hugging Face
+
+on:
+  workflow_dispatch:
+
+jobs:
+  train-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Login to Hugging Face
+      env:
+        HF_TOKEN: ${{ secrets.HF_TOKEN }}
+      run: |
+        python -c "from huggingface_hub import login; login('${{ secrets.HF_TOKEN }}')"
+
+    - name: Run training script
+      run: |
+        python src/train.py
+
