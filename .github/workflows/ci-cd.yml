@@ -29,12 +29,11 @@ jobs:
       run: |
         echo "Aggiungi qui i tuoi test o verifica il training"
 
-    - name: Setup git remote for space
-      run: git remote add space https://$TOKEN@huggingface.co/spaces/giardinsdev/sentiment-analyzer-twitter.git
+    - name: Push to Hugging Face Space
       env:
-        TOKEN: ${{ secrets.SPACE_GIT_TOKEN }}
-
-    - name: Push to space (force)
-      run: git push --force space main
+        HF_TOKEN: ${{ secrets.HF_TOKEN }}
+      run: |
+        git remote add space https://huggingface.co/spaces/giardinsdev/sentiment-analyzer-twitter
+        git push --force space main
 
 
