@@ -12,8 +12,6 @@ from torch.nn import CrossEntropyLoss
 from torch.optim import AdamW
 import torch
 import pandas as pd
-import kagglehub
-from kagglehub import KaggleDatasetAdapter
 
 class SentimentAnalyzer:
     def __init__(self, model, tokenizer, config, criterion, opt, epochs=15, freeze_base=True):
