@@ -1,12 +1,16 @@
 import requests
 
 def test_space_html_response():
-    text = "This is fantastic!"
-    url = "https://giardinsdev-sentiment-analyzer-twitter.hf.space/"  # oppure localhost se lo testi localmente
+    text = "I love this! It's amazing."  # Test positivo
 
-    response = requests.post(url + "api/predict", json={"data": [text]})
-    assert response.status_code == 200
+    url = "https://giardinsdev-sentiment-analyzer-twitter.hf.space/api/predict/"  # ⚠️ slash finale importante
+
+    response = requests.post(url, json={"data": [text]})
+    assert response.status_code == 200, f"Status code: {response.status_code}, Response: {response.text}"
+
     data = response.json()
-    assert "data" in data
+    assert "data" in data, f"'data' key missing in response: {data}"
+
     html_output = data["data"][0]
-    assert "positive" in html_output.lower() or "neutral" in html_output.lower() or "negative" in html_output.lower()
+    assert any(label in html_output.lower() for label in ["positive", "neutral", "negative"]), \
+        f"No sentiment label found in HTML output: {html_output}"
