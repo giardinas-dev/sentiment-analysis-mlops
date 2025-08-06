@@ -31,12 +31,27 @@ jobs:
       run: |
         echo "Aggiungi qui i tuoi test o verifica il training"
 
-    - name: Push to Hugging Face Space
+    - name: Push to Hugging Face Space (excluding images/)
       env:
         HF_TOKEN: ${{ secrets.HF_TOKEN }}
       run: |
+      
+        # Crea un branch temporaneo
+        git checkout -b push-to-space
+
+        # Rimuove la cartella images dal commit (solo in cache)
+        git rm -r --cached images || true
+
+        # Commit temporaneo (ignora se non c'è nulla da cambiare)
+        git commit -m "Remove images folder for Hugging Face push" || true
+
+        # Push al remote Hugging Face
         git remote add space https://giardinsdev:${HF_TOKEN}@huggingface.co/spaces/giardinsdev/sentiment-analyzer-twitter
-        git push --force space main
+        git push --force space push-to-space:main
+
+        # Torna alla branch originale e cancella la temporanea
+        git checkout main
+        git branch -D push-to-space
 
 
 
