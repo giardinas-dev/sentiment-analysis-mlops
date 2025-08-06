@@ -26,3 +26,5 @@ huggingface_hub
 kagglehub
 pytest
 pytest-cov
+requests
+responses
