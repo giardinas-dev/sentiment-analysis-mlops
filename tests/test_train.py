@@ -1,4 +1,6 @@
 from src.utils import prepare_data_and_model
+import os, sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from src.utils import SentimentAnalyzer
 
 def test_training_pipeline_runs():

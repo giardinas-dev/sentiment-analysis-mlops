@@ -1,4 +1,6 @@
 import responses
+import os, sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 from src.utils import SentimentAnalyzer 
 
 @responses.activate

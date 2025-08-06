@@ -1,6 +1,8 @@
 import pytest
 import torch
+import os, sys
 from transformers import AutoTokenizer, AutoConfig, AutoModelForSequenceClassification
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from src.utils import SentimentAnalyzer
 
 @pytest.fixture
