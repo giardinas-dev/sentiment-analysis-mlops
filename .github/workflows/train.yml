@@ -2,6 +2,23 @@ name: Train and Push Model to Hugging Face
 
 on:
   workflow_dispatch:
+    inputs:
+      epochs:
+        description: 'Number of training epochs'
+        required: false
+        default: '10'
+      learning_rate:
+        description: 'Learning rate'
+        required: false
+        default: '5e-5'
+      model_name:
+        description: 'Model name to push to Hugging Face'
+        required: false
+        default: 'giardinsdev/sentiment-analyzer-twitter'
+      subset_ratio:
+        description: 'Subset ratio of dataset to use (0 < ratio ≤ 1)'
+        required: false
+        default: '0.1'
 
 jobs:
   train-and-push:
@@ -28,6 +45,11 @@ jobs:
         python -c "from huggingface_hub import login; login('${{ secrets.HF_TOKEN }}')"
 
     - name: Run training script
+      env:
+        HF_TOKEN: ${{ secrets.HF_TOKEN }}
       run: |
-        python src/train.py
-
+        python src/train.py \
+          --epochs ${{ github.event.inputs.epochs }} \
+          --learning_rate ${{ github.event.inputs.learning_rate }} \
+          --model_name ${{ github.event.inputs.model_name }} \
+          --subset_ratio ${{ github.event.inputs.subset_ratio }}

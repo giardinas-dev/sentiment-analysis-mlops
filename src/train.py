@@ -1,29 +1,25 @@
-from transformers import AutoModelForSequenceClassification
-from transformers import TFAutoModelForSequenceClassification
-from transformers import AutoTokenizer, AutoConfig
-import numpy as np
-from scipy.special import softmax
+import argparse
+from transformers import AutoModelForSequenceClassification, AutoTokenizer, AutoConfig
 import torch
-from torch.utils.data import DataLoader
-from torch.optim import AdamW
-from torch.nn import CrossEntropyLoss
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
-from sklearn.model_selection import train_test_split
-from torch.utils.data import DataLoader, TensorDataset
-from sklearn.model_selection import StratifiedShuffleSplit
-from huggingface_hub import login, create_repo
-# Preprocess text (username and link placeholders
+from huggingface_hub import login
+from utils import SentimentAnalyzer, prepare_data_and_model
 
-from datasets import load_dataset
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import LabelEncoder
-from utils import SentimentAnalyzer, preprocess, get_stratified_subset,prepare_data_and_model
+# --- Parse command line arguments ---
+parser = argparse.ArgumentParser()
+parser.add_argument("--epochs", type=int, default=10)
+parser.add_argument("--learning_rate", type=float, default=5e-5)
+parser.add_argument("--model_name", type=str, default="giardinsdev/sentiment-analyzer-twitter")
+parser.add_argument("--subset_ratio", type=str, default=0.1)
+args = parser.parse_args()
 
+# --- Hugging Face login ---
+import os
+hf_token = os.environ.get("HF_TOKEN")
+if hf_token:
+    login(token=hf_token)
 
-assets = prepare_data_and_model()
+# --- Load data, model, tokenizer, etc. ---
+assets = prepare_data_and_model(learning_rate=args.learning_rate, model_name = args.model_name , subset_ratio = args.subset_ratio)
 
 model = assets["model"]
 tokenizer = assets["tokenizer"]
@@ -36,15 +32,18 @@ optimizer = assets["optimizer"]
 loss_fn = assets["loss_fn"]
 device = assets["device"]
 
+# --- Initialize SentimentAnalyzer ---
+sentiment = SentimentAnalyzer(
+    model, tokenizer, config,
+    loss_fn, optimizer,
+    epochs=args.epochs,
+    freeze_base=True
+)
 
-sentiment = SentimentAnalyzer(model, tokenizer, config, loss_fn, optimizer, epochs=10, freeze_base=True)
-
-
-#login(token="🟡 IL_TUO_TOKEN")
-
-sentiment.train(X_train, y_train, X_test, y_test, epochs=1)
+# --- Train & Evaluate ---
+sentiment.train(X_train, y_train, X_test, y_test, epochs=args.epochs)
 sentiment.evaluate(X_test, y_test)
 
-
-sentiment.model.push_to_hub("giardinsdev/sentiment-analyzer-twitter")
-sentiment.tokenizer.push_to_hub("giardinsdev/sentiment-analyzer-twitter")
+# --- Push to Hugging Face Hub ---
+sentiment.model.push_to_hub(args.model_name)
+sentiment.tokenizer.push_to_hub(args.model_name)

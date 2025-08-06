@@ -6,8 +6,9 @@ pandas
 tqdm
 spacy
 emoji
-gradio==4.43.0 
-
+gradio>=4.0
+ 
+fastapi
 
 
 # Prometheus metrics
@@ -16,6 +17,5 @@ prometheus_client
 # ASGI app framework (usato per esporre /metrics)
 starlette
 
-# Se usi anche uvicorn per l'avvio in locale
-uvicorn
+
 

@@ -189,7 +189,7 @@ def preprocess(text):
     return " ".join(new_text)
 
 
-def prepare_data_and_model(model_name="cardiffnlp/twitter-roberta-base-sentiment-latest", subset_ratio=0.1):
+def prepare_data_and_model(model_name="cardiffnlp/twitter-roberta-base-sentiment-latest", subset_ratio=0.1, learning_rate = 3e-5):
     print("Prepare model and data...")
     # Load tokenizer, config, model
     tokenizer = AutoTokenizer.from_pretrained(model_name)
@@ -236,7 +236,7 @@ def prepare_data_and_model(model_name="cardiffnlp/twitter-roberta-base-sentiment
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     # Optimizer
-    optimizer = AdamW(filter(lambda p: p.requires_grad, model.parameters()), lr=3e-5)
+    optimizer = AdamW(filter(lambda p: p.requires_grad, model.parameters()), lr=learning_rate)
 
     # Compute class weights
     counts = dataset['sentiment'].value_counts()
