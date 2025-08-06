@@ -4,7 +4,7 @@ import gradio as gr
 import requests
 import os
 from src.utils import SentimentAnalyzer
-MODEL = "giardinas-dev/sentiment-analysis-mlops"
+MODEL = "giardinsdev/sentiment-analyzer-twitter"
 HF_TOKEN = os.environ.get("token-space2")  # Hugging Face Spaces legge automaticamente i secrets come variabili d'ambiente
 
 tokenizer = AutoTokenizer.from_pretrained(MODEL, use_auth_token=HF_TOKEN)
