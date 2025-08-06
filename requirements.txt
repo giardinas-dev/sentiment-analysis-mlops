@@ -19,3 +19,5 @@ starlette
 
 
 
+huggingface_hub
+kagglehub

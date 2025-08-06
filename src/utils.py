@@ -1,17 +1,37 @@
-import torch
+# Standard library
+import os
+
+# Scientific computing
 import numpy as np
+import pandas as pd
 from scipy.special import softmax
+
+# Progress bar
 from tqdm import tqdm
+
+# Machine learning and evaluation
 from sklearn.metrics import f1_score
-import numpy as np
-from sklearn.model_selection import train_test_split
-from transformers import AutoModelForSequenceClassification, AutoTokenizer, AutoConfig
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
+
+# PyTorch
+import torch
 from torch.nn import CrossEntropyLoss
 from torch.optim import AdamW
-import torch
-import pandas as pd
+
+# Transformers (Hugging Face)
+from transformers import (
+    AutoModelForSequenceClassification,
+    AutoTokenizer,
+    AutoConfig
+)
+
+# Hugging Face Hub
+from huggingface_hub import login
+
+# KaggleHub (custom dataset loader)
+import kagglehub
+from kagglehub import KaggleDatasetAdapter
 
 class SentimentAnalyzer:
     def __init__(self, model, tokenizer, config, criterion = None , opt = None, epochs=15, freeze_base=True):
