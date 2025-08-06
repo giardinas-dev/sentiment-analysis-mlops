@@ -29,6 +29,7 @@ jobs:
 
     - name: Run Tests (optional)
       run: |
+        pip install pytest
         echo "Aggiungi qui i tuoi test o verifica il training"
         pytest tests/ --cov=src --maxfail=1 --disable-warnings -q
 
