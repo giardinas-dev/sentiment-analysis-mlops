@@ -13,6 +13,7 @@ from src.utils import SentimentAnalyzer
 
 @responses.activate
 def test_metrics_sent_posted():
+    print("test_metrics_sent_posted")
     responses.add(
         responses.POST,
         "https://metrics-fastapi-sentiment-analysis.onrender.com/metrics",

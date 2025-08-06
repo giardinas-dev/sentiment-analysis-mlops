@@ -7,6 +7,7 @@ from src.utils import SentimentAnalyzer
 
 @pytest.fixture
 def setup_analyzer():
+    print("TEST_SETUP_ANALYZER")
     model_name = "cardiffnlp/twitter-roberta-base-sentiment-latest"
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     config = AutoConfig.from_pretrained(model_name)

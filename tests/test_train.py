@@ -4,6 +4,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from src.utils import SentimentAnalyzer
 
 def test_training_pipeline_runs():
+    print("TEST_TRAINING_PIPELINE_RUNS")
     assets = prepare_data_and_model(subset_ratio=0.05)  # fast subset
 
     sentiment = SentimentAnalyzer(
