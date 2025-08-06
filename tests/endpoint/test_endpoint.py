@@ -12,5 +12,5 @@ def test_metrics_sent_posted():
         status=200
     )
 
-    result = analyze_sentiment("This is amazing!")
+    result = SentimentAnalyzer("This is amazing!")
     assert "positive" in result.lower()
