@@ -19,7 +19,7 @@ if hf_token:
     login(token=hf_token)
 
 # --- Load data, model, tokenizer, etc. ---
-assets = prepare_data_and_model(learning_rate=args.learning_rate, model_name = args.model_name , subset_ratio = args.float(args.subset_ratio), hf_token = hf_token)
+assets = prepare_data_and_model(learning_rate=args.learning_rate, model_name = args.model_name , subset_ratio = float(args.subset_ratio), hf_token = hf_token)
 
 model = assets["model"]
 tokenizer = assets["tokenizer"]
