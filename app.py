@@ -2,13 +2,14 @@ import torch
 from transformers import AutoModelForSequenceClassification, AutoTokenizer, AutoConfig
 import gradio as gr
 import requests
+import os
 from src.utils import SentimentAnalyzer
 MODEL = "giardinas-dev/sentiment-analysis-mlops"
+HF_TOKEN = os.environ.get("token-space2")  # Hugging Face Spaces legge automaticamente i secrets come variabili d'ambiente
 
-tokenizer = AutoTokenizer.from_pretrained(MODEL)
-config = AutoConfig.from_pretrained(MODEL)
-model = AutoModelForSequenceClassification.from_pretrained(MODEL)
-
+tokenizer = AutoTokenizer.from_pretrained(MODEL, use_auth_token=HF_TOKEN)
+config = AutoConfig.from_pretrained(MODEL, use_auth_token=HF_TOKEN)
+model = AutoModelForSequenceClassification.from_pretrained(MODEL, use_auth_token=HF_TOKEN)
 # Assumiamo che SentimentAnalyzer sia una classe già definita da te che usa model, tokenizer e config
 analyzer = SentimentAnalyzer(model, tokenizer, config)
 

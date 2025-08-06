@@ -209,12 +209,15 @@ def preprocess(text):
     return " ".join(new_text)
 
 
-def prepare_data_and_model(model_name="cardiffnlp/twitter-roberta-base-sentiment-latest", subset_ratio=0.1, learning_rate = 3e-5):
+def prepare_data_and_model(model_name="cardiffnlp/twitter-roberta-base-sentiment-latest", subset_ratio=0.1, learning_rate = 3e-5, hf_token = None):
     print("Prepare model and data...")
     # Load tokenizer, config, model
-    tokenizer = AutoTokenizer.from_pretrained(model_name)
-    config = AutoConfig.from_pretrained(model_name)
-    model = AutoModelForSequenceClassification.from_pretrained(model_name)
+    tokenizer = AutoTokenizer.from_pretrained(model_name, use_auth_token=hf_token)
+    model = AutoModelForSequenceClassification.from_pretrained(model_name, use_auth_token=hf_token)
+    config = AutoConfig.from_pretrained(model_name, use_auth_token=hf_token)
+
+ 
+
 
     # Load dataset from Hugging Fac via kagglehub
     hf_dataset = kagglehub.load_dataset(
