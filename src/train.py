@@ -9,7 +9,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--epochs", type=int, default=10)
 parser.add_argument("--learning_rate", type=float, default=5e-5)
 parser.add_argument("--model_name", type=str, default="giardinsdev/sentiment-analyzer-twitter")
-parser.add_argument("--subset_ratio", type=str, default=0.1)
+parser.add_argument("--subset_ratio", type=float, default=0.1)
 args = parser.parse_args()
 
 # --- Hugging Face login ---
@@ -19,7 +19,7 @@ if hf_token:
     login(token=hf_token)
 
 # --- Load data, model, tokenizer, etc. ---
-assets = prepare_data_and_model(learning_rate=args.learning_rate, model_name = args.model_name , subset_ratio = args.subset_ratio, hf_token = hf_token)
+assets = prepare_data_and_model(learning_rate=args.learning_rate, model_name = args.model_name , subset_ratio = args.float(args.subset_ratio), hf_token = hf_token)
 
 model = assets["model"]
 tokenizer = assets["tokenizer"]
