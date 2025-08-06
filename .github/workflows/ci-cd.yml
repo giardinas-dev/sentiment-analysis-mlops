@@ -27,11 +27,11 @@ jobs:
     - name: Download spaCy model
       run: python -m spacy download en_core_web_sm
 
-    #- name: Run Tests (optional)
-    #  run: |
-    #    echo "Aggiungi qui i tuoi test o verifica il training"
-    #    pytest tests/ --cov=src --maxfail=1 --disable-warnings -q
-    #    echo "test completati"
+    - name: Run Tests (optional)
+      run: |
+        echo "Aggiungi qui i tuoi test o verifica il training"
+        pytest tests/ --cov=src --maxfail=1 --disable-warnings -q
+        echo "test completati"
     - name: Push to Hugging Face Space (excluding images/)
       env:
         HF_TOKEN: ${{ secrets.HF_TOKEN }}
