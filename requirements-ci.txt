@@ -1,9 +1,26 @@
 torch
-transformers
+transformers>=4.30.0
 scikit-learn
 numpy
 pandas
 tqdm
 spacy
 emoji
+gradio>=4.0
+kagglehub[hf-datasets]
 
+
+ 
+fastapi
+
+
+# Prometheus metrics
+prometheus_client
+
+# ASGI app framework (usato per esporre /metrics)
+starlette
+
+
+
+huggingface_hub
+kagglehub
