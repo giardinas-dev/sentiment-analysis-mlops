@@ -3,7 +3,7 @@ from transformers import AutoModelForSequenceClassification, AutoTokenizer, Auto
 import gradio as gr
 import requests
 from src.utils import SentimentAnalyzer
-MODEL = "cardiffnlp/twitter-roberta-base-sentiment-latest"
+MODEL = "giardinas-dev/sentiment-analysis-mlops"
 
 tokenizer = AutoTokenizer.from_pretrained(MODEL)
 config = AutoConfig.from_pretrained(MODEL)
