@@ -30,12 +30,13 @@ jobs:
     - name: Run Tests (optional)
       run: |
         echo "Aggiungi qui i tuoi test o verifica il training"
+        pytest tests/ --cov=src --maxfail=1 --disable-warnings -q
 
     - name: Push to Hugging Face Space (excluding images/)
       env:
         HF_TOKEN: ${{ secrets.HF_TOKEN }}
       run: |
-      
+
         # Crea un branch temporaneo
         git checkout -b push-to-space
 
