@@ -7,6 +7,9 @@ tqdm
 spacy
 emoji
 gradio>=4.0
+kagglehub[hf-datasets]
+
+
  
 fastapi
 
