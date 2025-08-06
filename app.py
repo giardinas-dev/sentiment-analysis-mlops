@@ -55,4 +55,4 @@ iface = gr.Interface(
     title="Sentiment Analyzer Twitter",
     description="Analizza il sentiment del testo inserito usando un modello BERT multilingue."
 )
-iface.launch(enable_queue=False)
+iface.launch()

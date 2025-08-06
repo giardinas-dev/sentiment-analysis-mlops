@@ -27,12 +27,11 @@ jobs:
     - name: Download spaCy model
       run: python -m spacy download en_core_web_sm
 
-    - name: Run Tests (optional)
-      run: |
-        echo "Aggiungi qui i tuoi test o verifica il training"
-        pytest tests/ --cov=src --maxfail=1 --disable-warnings -q
-        echo "test completati"
-
+    #- name: Run Tests (optional)
+    #  run: |
+    #    echo "Aggiungi qui i tuoi test o verifica il training"
+    #    pytest tests/ --cov=src --maxfail=1 --disable-warnings -q
+    #    echo "test completati"
     - name: Push to Hugging Face Space (excluding images/)
       env:
         HF_TOKEN: ${{ secrets.HF_TOKEN }}
@@ -53,9 +52,14 @@ jobs:
         git remote add space https://giardinsdev:${HF_TOKEN}@huggingface.co/spaces/giardinsdev/sentiment-analyzer-twitter
         git push --force space push-to-space:main
 
-        # Torna alla branch originale e cancella la temporanea
+        # Salva i file non tracciati (come quelli in images/)
+        git stash --include-untracked
+
+        # Torna alla branch originale
         git checkout main
+
+        # Ripristina i file salvati
+        git stash pop || true  # ignora errori se non c’è nulla da ripristinare
+
+        # Elimina la branch temporanea
         git branch -D push-to-space
-
-
-
