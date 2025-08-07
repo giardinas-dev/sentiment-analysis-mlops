@@ -55,25 +55,21 @@ pip install -r requirements.txt
 
 export HF_TOKEN="your_hf_token_here"  # Linux/macOS
 set HF_TOKEN=your_hf_token_here       # Windows
-
+```
 
 ---
 
-### **4. README_Training.md**
-```markdown
 # Training
 
 To train the model locally:
 
 ```bash
 python src/train.py --learning_rate 5e-5 --model_name "distilbert-base-uncased" --subset_ratio 0.1
-
+```
 
 
 ---
 
-### **5. README_CICD_Workflows.md**
-```markdown
 # CI/CD Workflows
 
 - **ci-cd.yml**: Continuous integration for testing and deployment.
@@ -98,18 +94,17 @@ The app automatically:
 Example API call:
 ```python
 import requests
-metrics = {"positive": 120, "neutral": 80, "negative": 50}
+metrics = {"sentiment": "positive", "value": 0.8, "text": "I'm happy"}
 requests.post("https://your-monitoring-endpoint.com/metrics", json=metrics)
-
+```
 
 
 ---
 
-### **8. README_Development_Visualization.md**
-```markdown
+
 # Development & Visualization
 
-- **VS Code** or **Google Colab** can be used to run training, visualize metrics, or debug the app.  
+- VS Code or Google Colab*can be used to run training, visualize metrics, or debug the app.  
 - GPU support is available in Colab or Hugging Face Spaces for faster training.  
 - Use `matplotlib` and `seaborn` for plotting metrics locally.
 
@@ -119,12 +114,10 @@ Run unit and integration tests:
 
 ```bash
 pytest tests/
-
+```
 
 ---
 
-### **10. README_Notes.md**
-```markdown
 # Notes
 
 - Environment variable `HF_TOKEN` must be active for training and downloading datasets.  
